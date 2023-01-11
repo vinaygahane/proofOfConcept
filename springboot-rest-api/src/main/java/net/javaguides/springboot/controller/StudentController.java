@@ -1,8 +1,11 @@
 package net.javaguides.springboot.controller;
 
 import net.javaguides.springboot.bean.Student;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +19,21 @@ public class StudentController {
     {
         Student student = new Student(1,"Vinaykumar","Gahane");
         return student; //returns JSON <key,value> pair
+    }
+
+    //ResponseEntity-->Used to represent the whole HTTP response(status code , headers , body)
+    @GetMapping("/studenttt")
+    public ResponseEntity<Student> getStudenttt()
+    {
+        Student student = new Student(1,"Vinaykumar","Gahane");
+
+        // return new ResponseEntity<>(student,HttpStatus.OK);
+        //return ResponseEntity.ok(student);//This statement is equivalent to above statement
+
+        //Now lets pass custom header into body
+        return ResponseEntity.ok()
+                .header("custom-header","ramesh")//key-value pair
+                .body(student);
     }
 
     //Spring boot API that returns java beans list as JSON to client
@@ -52,14 +70,34 @@ public class StudentController {
         return new Student(id,firstName,lastName);
     }
 
-    //Spring Boot REST API that handles HTTP POST request
+    //Spring Boot REST API that handles HTTP POST request --> creating new resource
     //@PostMapping->Used for mapping HTTP POST request onto specific handler method
    // @RequestBody->Responsible for retrieving the HTTP request body and automatically converting it to java object from JSON
     @PostMapping("students/create")
-    public  Student createStudent(Student student){
+    @ResponseStatus(HttpStatus.CREATED)//To return the status code
+    public  Student createStudent(@RequestBody Student student){
         System.out.println(student.getId());
         System.out.println(student.getFirstName());
         System.out.println(student.getLastName());
         return student;
     }
-}
+
+    //Springboot REST API to handle PUT request -->updating the existing resource
+    //@PutMapping() -> for Mapping HTTP PUT request onto specific handler method
+    @PutMapping("/students/{id}/update")
+    public  Student updateStudent(@RequestBody Student student,@PathVariable("id") int studentId) {
+        System.out.println(student.getFirstName());
+        System.out.println(student.getLastName());
+        return student;
+    }
+
+
+    //Springboot REST API to handle DELETE request -->deleting the existing resource
+    //@DeleteMapping() -> for Mapping HTTP DELETE request onto specific handler method
+    @DeleteMapping("/students/{id}/delete")
+    public String deleteStudent(@PathVariable("id") int studentId){
+        System.out.println(studentId);
+        return "Student deleted successfully";
+    }
+
+    }
