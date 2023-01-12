@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+//@RequestMapping("students")//Use to set base URL(common urls for all REST APIs)//you can remove /students from below REST APIs
 public class StudentController {
 
     //Spring boot API that returns java bean as JSON to client
@@ -47,6 +48,7 @@ public class StudentController {
         students.add(new Student(2,"Vishal","Khedekar"));
         students.add(new Student(3,"Kunal","Dhanushykar"));
         return students; //returns list in JSON format
+        //return ResponseEntity.ok(students);//returning using responseEntity class
     }
 
     //Spring boot Rest API to handle path Variable
@@ -58,6 +60,7 @@ public class StudentController {
                                        @PathVariable("first-name") String firstName,
                                        @PathVariable("last-name") String lastName){// pass id as "id" and "studentID" are same//No need to pass if we use id instead of studentID
         return new Student(studentId,firstName,lastName);
+        //return ResponseEntity.ok(new Student(studentId,firstName,lastName));
     }
 
     //Spring boot Rest API with Request param//It is used to extract values from URl
@@ -80,6 +83,7 @@ public class StudentController {
         System.out.println(student.getFirstName());
         System.out.println(student.getLastName());
         return student;
+        //return new ResponseEntity<>(student,HttpStatus.CREATED)
     }
 
     //Springboot REST API to handle PUT request -->updating the existing resource
@@ -89,6 +93,9 @@ public class StudentController {
         System.out.println(student.getFirstName());
         System.out.println(student.getLastName());
         return student;
+        //return ResponseEntity.ok(students);//returning using responseEntity class
+
+
     }
 
 
@@ -98,6 +105,8 @@ public class StudentController {
     public String deleteStudent(@PathVariable("id") int studentId){
         System.out.println(studentId);
         return "Student deleted successfully";
+        //return ResponseEntity.ok("Student deleted successfully");//returning using responseEntity class
+
     }
 
     }
