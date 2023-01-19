@@ -1,15 +1,17 @@
 package com.springboot.blog.service.impl;
 
 import com.springboot.blog.entity.Post;
+import com.springboot.blog.entity.PostResponse;
 import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.payload.PostDto;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.DeleteMapping;
-
-import java.awt.print.Pageable;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,15 +41,33 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPosts(int pageNo , int pageSize) {
+    public PostResponse getAllPosts(int pageNo , int pageSize,String sortBy,String sortDir) {
+
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())?Sort.by(sortBy).ascending()
+                :Sort.by(sortBy).descending();
 
         //create Pageble Instance
-        Pageable pageable = PageRequest.of(pageNo,pageSize);
+        Pageable pageable = PageRequest.of(pageNo,pageSize, sort);//desc:- Sort.by(sortBy).descending()
 
-       List<Post> posts =  postRepository.findAll(pageable);
+       Page<Post> posts =  postRepository.findAll(pageable);
 
-       //convert List<Post> to List<PostDto>
-       return  posts.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
+       //get content from Page object
+        List<Post> listOfPosts = posts.getContent();
+
+
+       List<PostDto> content=  listOfPosts.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
+
+       PostResponse postresponse = new PostResponse();
+        postresponse.setContent(content);
+        postresponse.setPageNo(posts.getNumber());
+        postresponse.setPageSize(posts.getSize());
+        postresponse.setTotalElements(posts.getTotalElements());
+        postresponse.setTotalPages(posts.getTotalPages());
+        postresponse.setLast(posts.isLast());
+
+        return postresponse;
+
+
 
 //       List<PostDto> response = new ArrayList<>();
 //       for(Post p : posts)
