@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
+ @NoArgsConstructor
 
 @Entity
 @Table(name="comments")
